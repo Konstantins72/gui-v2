@@ -35,10 +35,16 @@ DeviceListDelegate {
 
 		filterType: QuantityObjectModel.HasValue
 
-		QuantityObject { object: filteredChargeMode; key: "textValue"; unit: VenusOS.Units_None }
+		QuantityObject { object: diagnosticChargeMode; key: "textValue"; unit: VenusOS.Units_None }
 		QuantityObject { object: soc; unit: VenusOS.Units_Percentage }
 		QuantityObject { object: voltage; unit: VenusOS.Units_Volt_DC }
 		QuantityObject { object: current; unit: VenusOS.Units_Amp }
+	}
+
+	// Temporary display-only diagnostic: confirms which battery delegate is rendered.
+	QtObject {
+		id: diagnosticChargeMode
+		readonly property string textValue: "TEST-FLOAT"
 	}
 
 	VeQuickItem {
