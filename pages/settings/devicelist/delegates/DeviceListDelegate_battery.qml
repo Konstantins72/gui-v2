@@ -35,7 +35,7 @@ DeviceListDelegate {
 
 		filterType: QuantityObjectModel.HasValue
 
-		QuantityObject { object: bmsChargeMode; key: "textValue"; unit: VenusOS.Units_None }
+		QuantityObject { object: filteredChargeMode; key: "textValue"; unit: VenusOS.Units_None }
 		QuantityObject { object: soc; unit: VenusOS.Units_Percentage }
 		QuantityObject { object: voltage; unit: VenusOS.Units_Volt_DC }
 		QuantityObject { object: current; unit: VenusOS.Units_Amp }
@@ -43,8 +43,16 @@ DeviceListDelegate {
 
 	VeQuickItem {
 		id: bmsChargeMode
-		readonly property string textValue: valid && value !== undefined && value !== null ? String(value).split("|").filter(function(part) { return part.trim().toLowerCase() !== "linear mode" }).join(" | ").trim() : ""
 		uid: root.device.serviceUid + "/Info/ChargeMode"
+	}
+
+	QtObject {
+		id: filteredChargeMode
+		readonly property string textValue: bmsChargeMode.valid && bmsChargeMode.value !== undefined && bmsChargeMode.value !== null
+			? String(bmsChargeMode.value).split("|").filter(function(part) {
+				return part.trim().toLowerCase() !== "linear mode"
+			}).join(" | ").trim()
+			: ""
 	}
 
 	VeQuickItem {
