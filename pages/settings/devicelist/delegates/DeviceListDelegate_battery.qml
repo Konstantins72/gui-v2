@@ -43,7 +43,7 @@ DeviceListDelegate {
 
 	VeQuickItem {
 		id: bmsChargeMode
-		readonly property string textValue: valid && value !== undefined && value !== null ? String(value).replace(/\s*\|\s*LINEAR MODE\b/gi, "").trim() : ""
+		readonly property string textValue: valid && value !== undefined && value !== null ? String(value).split("|").filter(function(part) { return part.trim().toLowerCase() !== "linear mode" }).join(" | ").trim() : ""
 		uid: root.device.serviceUid + "/Info/ChargeMode"
 	}
 
