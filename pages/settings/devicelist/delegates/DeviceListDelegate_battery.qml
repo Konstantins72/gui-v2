@@ -35,16 +35,10 @@ DeviceListDelegate {
 
 		filterType: QuantityObjectModel.HasValue
 
-		QuantityObject { object: diagnosticChargeMode; key: "textValue"; unit: VenusOS.Units_None }
+		QuantityObject { object: filteredChargeMode; key: "textValue"; unit: VenusOS.Units_None }
 		QuantityObject { object: soc; unit: VenusOS.Units_Percentage }
 		QuantityObject { object: voltage; unit: VenusOS.Units_Volt_DC }
 		QuantityObject { object: current; unit: VenusOS.Units_Amp }
-	}
-
-	// Temporary display-only diagnostic: confirms which battery delegate is rendered.
-	QtObject {
-		id: diagnosticChargeMode
-		readonly property string textValue: "TEST-FLOAT"
 	}
 
 	VeQuickItem {
@@ -54,11 +48,12 @@ DeviceListDelegate {
 
 	QtObject {
 		id: filteredChargeMode
-		readonly property string textValue: bmsChargeMode.valid && bmsChargeMode.value !== undefined && bmsChargeMode.value !== null
-			? String(bmsChargeMode.value).split("|").filter(function(part) {
-				return part.trim().toLowerCase() !== "linear mode"
-			}).join(" | ").trim()
-			: ""
+		// Display-only: remove the BMS mode suffix, keeping the original charge stage.
+		readonly property string textValue: {
+			if (!bmsChargeMode.valid || bmsChargeMode.value === undefined || bmsChargeMode.value === null)
+				return ""
+			return String(bmsChargeMode.value).replace(/\s*\|\s*Linear Mode\s*(?=\||$)/gi, "").trim()
+		}
 	}
 
 	VeQuickItem {
