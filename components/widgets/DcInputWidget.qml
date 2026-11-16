@@ -32,6 +32,24 @@ OverviewWidget {
 			: ""
 	}
 
+	// The wind charger is a DC meter (SmartShunt). Only show readings for a
+	// single wind meter so the values cannot be mistaken for a combined total.
+	readonly property bool showWindShuntDetails: root.inputType === VenusOS.DcMeter_Type_WindCharger
+			&& inputDeviceModel.count === 1
+			&& root.size !== VenusOS.OverviewWidget_Size_XS
+
+	VeQuickItem {
+		id: windShuntVoltage
+		uid: root.showWindShuntDetails
+			? inputDeviceModel.firstObject.serviceUid + "/Dc/0/Voltage" : ""
+	}
+
+	VeQuickItem {
+		id: windShuntCurrent
+		uid: root.showWindShuntDetails
+			? inputDeviceModel.firstObject.serviceUid + "/Dc/0/Current" : ""
+	}
+
 	contentItem: ColumnLayout {
 		spacing: Theme.geometry_overviewPage_widget_content_spacing
 
@@ -54,15 +72,42 @@ OverviewWidget {
 			}
 		}
 
-		OverviewElectricalQuantityLabel {
-			widgetSize: root.size
-			dataObject: QtObject {
-				readonly property real power: inputDeviceModel.totalPower
-				readonly property real current: inputDeviceModel.totalCurrent
-			}
-			sourceType: VenusOS.ElectricalQuantity_Source_Dc
+		Item {
 			Layout.fillWidth: true
 			Layout.fillHeight: true
+
+			// Keep the existing power indicator in exactly the same area.
+			OverviewElectricalQuantityLabel {
+				anchors.fill: parent
+				widgetSize: root.size
+				dataObject: QtObject {
+					readonly property real power: inputDeviceModel.totalPower
+					readonly property real current: inputDeviceModel.totalCurrent
+				}
+				sourceType: VenusOS.ElectricalQuantity_Source_Dc
+			}
+
+			// Additional readings appear only on the wind charger widget.
+			Row {
+				anchors.right: parent.right
+				anchors.bottom: parent.bottom
+				spacing: Theme.geometry_overviewPage_widget_content_spacing
+				visible: root.showWindShuntDetails
+
+				QuantityLabel {
+					value: windShuntVoltage.value
+					unit: VenusOS.Units_Volt_DC
+					font.pixelSize: root.secondaryFontSize
+					visible: windShuntVoltage.valid
+				}
+
+				QuantityLabel {
+					value: windShuntCurrent.value
+					unit: VenusOS.Units_Amp
+					font.pixelSize: root.secondaryFontSize
+					visible: windShuntCurrent.valid
+				}
+			}
 		}
 	}
 
