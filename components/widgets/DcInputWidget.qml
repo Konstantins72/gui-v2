@@ -97,14 +97,14 @@ OverviewWidget {
 				QuantityLabel {
 					value: windShuntVoltage.value
 					unit: VenusOS.Units_Volt_DC
-					font.pixelSize: root.secondaryFontSize
+					font.pixelSize: Math.round(root.secondaryFontSize * 1.3)
 					visible: windShuntVoltage.valid
 				}
 
 				QuantityLabel {
 					value: windShuntCurrent.value
 					unit: VenusOS.Units_Amp
-					font.pixelSize: root.secondaryFontSize
+					font.pixelSize: Math.round(root.secondaryFontSize * 1.3)
 					visible: windShuntCurrent.valid
 				}
 			}
