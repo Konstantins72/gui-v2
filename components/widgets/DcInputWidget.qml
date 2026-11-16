@@ -45,6 +45,12 @@ OverviewWidget {
 	}
 
 	VeQuickItem {
+		id: windShuntPower
+		uid: root.showWindShuntDetails
+			? inputDeviceModel.firstObject.serviceUid + "/Dc/0/Power" : ""
+	}
+
+	VeQuickItem {
 		id: windShuntCurrent
 		uid: root.showWindShuntDetails
 			? inputDeviceModel.firstObject.serviceUid + "/Dc/0/Current" : ""
@@ -81,7 +87,8 @@ OverviewWidget {
 				anchors.fill: parent
 				widgetSize: root.size
 				dataObject: QtObject {
-					readonly property real power: inputDeviceModel.totalPower
+					readonly property real power: root.showWindShuntDetails && windShuntPower.valid
+						? windShuntPower.value : inputDeviceModel.totalPower
 					readonly property real current: inputDeviceModel.totalCurrent
 				}
 				sourceType: VenusOS.ElectricalQuantity_Source_Dc
@@ -91,7 +98,7 @@ OverviewWidget {
 			Row {
 				anchors.right: parent.right
 				anchors.bottom: parent.bottom
-				spacing: Theme.geometry_overviewPage_widget_content_spacing
+				spacing: 14 // pixels between voltage and current
 				visible: root.showWindShuntDetails
 
 				QuantityLabel {
